@@ -2,19 +2,24 @@
 #  to a pubsubchannel.
 
 import pika
+import time
 
 # Connect to RabbitMQ
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
-channel = connection.channel()
+channel    = connection.channel()
 
 # Declare a fanout exchange
-channel.exchange_declare(exchange='logs', exchange_type='fanout')
+channel.exchange_declare(exchange='insultsx', exchange_type='fanout')
 
-# Publish a message
-message = "Hello, all consumers!"
-channel.basic_publish(exchange='logs', routing_key='', body=message)
+# Send multiple messages
+insults = ["Maricon", "Podemita", "Chimpance"]
 
-print(f" [x] Sent '{message}'")
+for insult in insults:
+    # Publish a message
+    channel.basic_publish(exchange='insultsx', routing_key='', body=insult)
+    print(f" [x] Sent : {insult}")
+    # Simulating a delay in task production
+    time.sleep(1)  
 
 # Close connection
 connection.close()
